@@ -5,7 +5,7 @@ from model.nodo import Nodo, ROJO, NEGRO
 
 class ArbolRojoNegro:
     def __init__(self):
-        # NIL representa las hojas ausentes, que SIEMPRE son negras.
+
         self.NIL = Nodo(None, NEGRO)
         self.NIL.izquierdo = self.NIL
         self.NIL.derecho = self.NIL
@@ -17,9 +17,7 @@ class ArbolRojoNegro:
     def _anotar(self, descripcion):
         self.pasos.append(descripcion)
 
-    # -------------------------------------------------------------
-    # 1. BÚSQUEDA
-    # -------------------------------------------------------------
+
     def _encontrar(self, valor):
         actual = self.raiz
         while actual is not self.NIL:
@@ -32,12 +30,10 @@ class ArbolRojoNegro:
         return self.NIL
 
     def buscar(self, valor):
-        """Devuelve True si el valor existe; False en caso contrario."""
+
         return self._encontrar(valor) is not self.NIL
 
-    # -------------------------------------------------------------
-    # 2. ROTACIONES (conservan el orden de búsqueda)
-    # -------------------------------------------------------------
+
     def _rotar_izquierda(self, x):
         y = x.derecho
         if y is self.NIL:
@@ -80,11 +76,9 @@ class ArbolRojoNegro:
         x.padre = y
         self._anotar(f"Rotación DERECHA alrededor de {x.valor}; sube {y.valor}.")
 
-    # -------------------------------------------------------------
-    # 3. INSERCIÓN + CORRECCIÓN
-    # -------------------------------------------------------------
+
     def insertar(self, valor):
-        """Inserta un número entero. Devuelve False si ya existe."""
+
         self.pasos = []
         if self.buscar(valor):
             self._anotar(f"El valor {valor} ya existe: no se permiten duplicados.")
@@ -164,18 +158,16 @@ class ArbolRojoNegro:
             self._anotar("La raíz se establece en NEGRO.")
         self.raiz.color = NEGRO
 
-    # -------------------------------------------------------------
-    # 4. ELIMINACIÓN + CORRECCIÓN
-    # -------------------------------------------------------------
+
     def _trasplantar(self, anterior, nuevo):
-        """Sustituye un subárbol por otro."""
+
         if anterior.padre is self.NIL:
             self.raiz = nuevo
         elif anterior is anterior.padre.izquierdo:
             anterior.padre.izquierdo = nuevo
         else:
             anterior.padre.derecho = nuevo
-        # También se actualiza el padre del NIL para corregir eliminaciones.
+
         nuevo.padre = anterior.padre
 
     def _minimo(self, nodo):
@@ -184,7 +176,7 @@ class ArbolRojoNegro:
         return nodo
 
     def eliminar(self, valor):
-        """Elimina un número existente y mantiene los invariantes rojo-negro."""
+
         self.pasos = []
         z = self._encontrar(valor)
         if z is self.NIL:
@@ -201,7 +193,7 @@ class ArbolRojoNegro:
             x = z.izquierdo
             self._trasplantar(z, z.izquierdo)
         else:
-            y = self._minimo(z.derecho)  # Sucesor en orden.
+            y = self._minimo(z.derecho)
             color_original = y.color
             x = y.derecho
             if y.padre is z:
@@ -230,7 +222,7 @@ class ArbolRojoNegro:
         return True
 
     def _corregir_eliminacion(self, x):
-        """Corrección de eliminación, con casos simétricos (algoritmo RB)."""
+
         while x is not self.raiz and x.color == NEGRO:
             if x is x.padre.izquierdo:
                 hermano = x.padre.derecho
@@ -293,9 +285,7 @@ class ArbolRojoNegro:
 
         x.color = NEGRO
 
-    # -------------------------------------------------------------
-    # 5. CONSULTAS Y VISUALIZACIÓN
-    # -------------------------------------------------------------
+
     def inorden(self):
         elementos = []
 
@@ -310,7 +300,7 @@ class ArbolRojoNegro:
         return elementos
 
     def altura(self):
-        """Altura en aristas; árbol vacío: -1; solo raíz: 0."""
+
         def medir(nodo):
             if nodo is self.NIL:
                 return -1
@@ -318,7 +308,7 @@ class ArbolRojoNegro:
         return medir(self.raiz)
 
     def dibujar(self):
-        """Dibuja el árbol en consola. N = negro; R = rojo."""
+
         if self.raiz is self.NIL:
             return "(Árbol vacío)"
 
@@ -342,11 +332,9 @@ class ArbolRojoNegro:
         agregar(self.raiz, "", True, "RAÍZ")
         return "\n".join(lineas)
 
-    # -------------------------------------------------------------
-    # 6. VERIFICACIÓN DE LAS PROPIEDADES
-    # -------------------------------------------------------------
+
     def verificar_propiedades(self):
-        """Devuelve (True/False, explicación). Revisa BST, colores y altura negra."""
+
         if self.NIL.color != NEGRO:
             return False, "La hoja centinela NIL no es negra."
         if self.raiz is self.NIL:
@@ -363,7 +351,7 @@ class ArbolRojoNegro:
 
         def revisar(nodo, minimo, maximo):
             if nodo is self.NIL:
-                return 1  # La hoja NIL cuenta como un nodo negro.
+                return 1
             if nodo is None or nodo.izquierdo is None or nodo.derecho is None:
                 raise ValueError("Hay una referencia de hijo incorrecta.")
             if id(nodo) in visitados:
